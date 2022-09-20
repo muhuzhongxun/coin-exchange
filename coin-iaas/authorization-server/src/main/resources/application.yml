@@ -7,4 +7,14 @@ spring:
     nacos:
       discovery:
         server-addr: nacos-server:8848
-
+  datasource:
+    url: jdbc:mysql://mysql-server:3307/coin-exchange?useSSL=false&serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: asd123..
+    hikari:
+      max-lifetime: 120000
+#  redis:
+#    host: redis-server
+#    port: 6380
+#    password: mhzx123..
