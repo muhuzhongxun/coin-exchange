@@ -38,10 +38,12 @@
         <spring-cloud-oauth2.version>2.2.5.RELEASE</spring-cloud-oauth2.version>
         <spring-cloud-openfeign.version>3.1.1</spring-cloud-openfeign.version>
 
-        <mybatis-plus-boot-stater.version>3.5.1</mybatis-plus-boot-stater.version>
+<!--        因为3.4.2以后，MP移除Rest API 通用控制器（common-aspect-GlobalExceptionHandler），所以这里只用3.4.2之前的版本-->
+        <mybatis-plus-boot-stater.version>3.4.2</mybatis-plus-boot-stater.version>
         <druid-boot-stater.version>1.2.9</druid-boot-stater.version>
-        <redisson-spring-boot-starter.version>3.17.4</redisson-spring-boot-starter.version>
-        <jetcache-starter-redis.version>2.7.0.M1</jetcache-starter-redis.version>
+<!--        注意redisson整合包必须要兼容jetcache的版本-->
+        <redisson-spring-boot-starter.version>3.17.0</redisson-spring-boot-starter.version>
+        <jetcache-starter-redis.version>2.6.7</jetcache-starter-redis.version>
         <disruptor.version>4.0.0.RC1</disruptor.version>
         <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
@@ -55,6 +57,8 @@
         <joda-time.version>2.10.14</joda-time.version>
         <okhttp.version>5.0.0-alpha.10</okhttp.version>
         <okio.version>3.2.0</okio.version>
+        <hutool.version>5.8.7</hutool.version>
+        <swagger2.version>3.0.0</swagger2.version>
     </properties>
 
 <!--    全局依赖-->
@@ -152,16 +156,6 @@
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swagger2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swagger2.version}</version>
-            </dependency>
 
             <!--mapStruct依赖-->
             <dependency>
@@ -222,6 +216,24 @@
                 <groupId>com.aliyun</groupId>
                 <artifactId>aliyun-java-sdk-dm</artifactId>
                 <version>${aliyun-java-sdk-dm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!--swagger2-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger2.version}</version>
+            </dependency>
+            <!--swagger2的web界面-->
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger2.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,0 +1,64 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: coin-common
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql-server:3307/coin-exchange
+    username: root
+    password: asd123..
+  redis:
+    host: redis-server
+    port: 6380
+    password: mhzx123..
+  cloud:
+    nacos:
+      discovery:
+        server-addr: nacos-server:8848
+      config:
+        enabled: false
+        file-extension: yaml
+    sentinel:
+      transport:
+        dashboard: sentinel-dashboard:8858
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+#   缺少上面的包会报错-》   Cannot invoke “org.springframework.web.servlet.mvc.condition.PatternsRequestCondition.getPatterns()” because “this.condition” is null
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:/mapper/*Mapper.xml
+#没有提示jetcache！！！！
+jetcache:
+  statIntervalMinutes: 15
+  areaInCacheName: false
+  local:
+    default:
+      type: linkedhashmap
+      keyConvertor: fastjson
+  remote:
+    default:
+      type: redis
+      keyConvertor: fastjson
+      valueEncoder: kryo
+      valueDecoder: kryo
+      poolConfig:
+        minIdle: 5
+        maxIdle: 20
+        maxTotal: 50
+      host: ${spring.redis.host}
+      port: ${spring.redis.port}
+#      password:  ${spring.redis.password} 不需要密码
+swagger2:
+  base-package: ltd.muhuzhongxun.controller
+  name: 数字货币交易所
+  url: http://www.muhuzhongxun.ltd
+  email: 这里是Swagger的email
+  title: 这里是Swagger的标题
+  description: 这里是Swagger的描述
+  version: 1.0.0
+  termsOfServiceUrl: http://www.muhuzhongxun.ltd
