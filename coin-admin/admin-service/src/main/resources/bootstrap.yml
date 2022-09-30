@@ -1,0 +1,12 @@
+#由于nacos-2021整合包不支持botstrap，所以需要在common模块添加spring-cloud-starter-bootstrap依赖
+spring:
+  application:  # 应用名称
+    name: admin-service
+  profiles:  #切换到开发环境上面
+    active: dev
+  cloud:
+    nacos:  #配置Nacos的地址
+      server-addr: nacos-server:8848
+      config:  # 配置文件的扩展名
+        file-extension: yaml
+#拉取的配置文件id：admin-service-dev.yaml
