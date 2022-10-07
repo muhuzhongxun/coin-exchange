@@ -26,8 +26,8 @@ public class SysLoginController {
     @ApiOperation(value = "后台管理人员登录")
     @ApiImplicitParams(
             {
-                    @ApiImplicitParam(name = "username", value = "用户名称"),
-                    @ApiImplicitParam(name = "password", value = "用户的密码"),
+                    @ApiImplicitParam(name = "username", value = "用户名称", dataTypeClass = String.class),
+                    @ApiImplicitParam(name = "password", value = "用户的密码",dataTypeClass = String.class),
             }
     )
     public LoginResult login(

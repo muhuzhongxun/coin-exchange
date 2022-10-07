@@ -19,7 +19,7 @@ public class TestController {
     @GetMapping("/user/info/{id}")
     @ApiOperation(value = "使用用户的id查询用户",authorizations = {@Authorization("Authorization")})
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "用户的id值")
+            @ApiImplicitParam(name = "id",value = "用户的id值", dataTypeClass = String.class)
     })
     public R<SysUser> sysUser(@PathVariable("id")Long id){
         SysUser sysUser = sysUserService.getById(id);

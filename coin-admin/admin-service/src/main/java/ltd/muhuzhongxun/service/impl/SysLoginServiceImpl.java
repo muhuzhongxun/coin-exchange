@@ -14,6 +14,7 @@ import ltd.muhuzhongxun.service.SysLoginService;
 import ltd.muhuzhongxun.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,6 +23,7 @@ import org.springframework.security.jwt.JwtHelper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,6 +35,9 @@ public class SysLoginServiceImpl implements SysLoginService {
 
     @Autowired
     private SysMenuService sysMenuService ;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Value("${basic.token:Basic Y29pbi1hcGk6Y29pbi1zZWNyZXQ=}")
     private String basicToken ;
@@ -67,6 +72,10 @@ public class SysLoginServiceImpl implements SysLoginService {
         List<SimpleGrantedAuthority> authorities = authoritiesJsonArray.stream() // 组装我们的权限数据
                 .map(authorityJson->new SimpleGrantedAuthority(authorityJson.toString()))
                 .collect(Collectors.toList());
-        return new LoginResult(token, menus, authorities);
+//       1. 将token 存储在redis里面，配置我们的网关做jwt验证的操作
+        redisTemplate.opsForValue().set(token," ",jwtToken.getExpiresIn(), TimeUnit.SECONDS);
+        //2.返回给前端的数据token，缺少'bearer'-->jwtToken.getTokenType().已补充。
+        return new LoginResult(jwtToken.getTokenType()+" "+token, menus, authorities);
+//        return new LoginResult(token, menus, authorities);
     }
 }
