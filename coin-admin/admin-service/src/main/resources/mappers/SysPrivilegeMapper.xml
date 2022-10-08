@@ -19,4 +19,29 @@
     <!--@mbg.generated-->
     id, menu_id, `name`, description, url, `method`, create_by, modify_by, created, last_update_time
   </sql>
+  <select id="selectByRoleId" resultMap="BaseResultMap">
+    SELECT
+        p.id,
+        p.menu_id,
+        p.`name`,
+        p.description,
+        p.url,
+        p.`method`,
+        p.modify_by,
+        p.created,
+        p.last_update_time
+    FROM sys_privilege AS p LEFt JOIN sys_role_privilege AS rp ON p.id = rp.privilege_id
+    WHERE rp.role_id = #{roleId}
+   </select>
+  <select id="getPrivilegesByRoleId" resultType="java.lang.Long">
+
+    SELECT
+    privilege_id
+    FROM
+    sys_role_privilege
+    WHERE role_id = #{roleId}
+
+  </select>
+
+
 </mapper>

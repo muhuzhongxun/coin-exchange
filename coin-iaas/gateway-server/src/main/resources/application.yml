@@ -18,6 +18,8 @@ spring:
           uri: lb://admin-service   # 转发到那个目的地
           predicates:
             - Path=/admin/**
+          filters:
+            - StripPrefix=1 # 当前端访问/admin/login -》 login将admin自动去掉
         - id: test-router
           uri: http://www.aliyun.com
           predicates:
@@ -32,6 +34,7 @@ spring:
 #          file: classpath:gw-flow.json
 #          ruleType: gw_flow
         ds1.nacos:
+          #com.alibaba.csp.sentinel.datasource.nacos.NacosDataSource 使用Nacos持久化我的sentinel 数据时，需要添加nacos-datasource的依赖
           serverAddr: nacos-server:8848
           dataId: gw-flow
           ruleType: gw_flow
@@ -42,7 +45,7 @@ spring:
         ds2.nacos:
           serverAddr: nacos-server:8848
           dataId: api-group
-          ruleType: gw_api_group
+          ruleType: gw_api_group   # 我们演示了sentinel-dashboard 的规则的定义，而且规则定义好了后，我们的网关能立马的感知到（生效）（nacos无法感知），但是我们下次重启，会丢失规则。--》nacos
   redis:
     host: redis-server
     post: 6380

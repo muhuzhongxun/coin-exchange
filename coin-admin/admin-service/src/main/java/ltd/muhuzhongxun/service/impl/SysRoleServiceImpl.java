@@ -1,5 +1,9 @@
 package ltd.muhuzhongxun.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import ltd.muhuzhongxun.domain.SysPrivilege;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -16,6 +20,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Autowired
     private SysRoleMapper sysRoleMapper;
 
+
     /**
      * 判断一个用户是否为超级的管理员
      *
@@ -31,6 +36,25 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             return true;
         }
         return false;
+    }
+
+    /**
+     * 使用角色的名称模糊分页角色查询
+     *
+     * @param page 分页数据
+     * @param name 角色的名称
+     * @return
+     */
+    @Override
+    public Page<SysRole> findByPage(Page<SysRole> page, String name) {
+        return page(page, new LambdaQueryWrapper<SysRole>()
+                .like(
+                !StringUtils.isEmpty(name),
+                SysRole::getName,
+                name
+                )
+                .orderByDesc(SysRole::getLastUpdateTime)
+        );
     }
 }
 
