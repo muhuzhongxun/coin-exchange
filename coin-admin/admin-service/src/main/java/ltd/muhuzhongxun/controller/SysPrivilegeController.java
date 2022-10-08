@@ -58,10 +58,8 @@ public class SysPrivilegeController {
     public R<Page<SysPrivilege>> findByPage(@ApiIgnore Page<SysPrivilege> page){
 
         // 查询时，我们将最近新增的、修改的数据优先展示-> 排序->lastUpdateTime
-//  orderitem失效，改用wrapper      page.addOrder(OrderItem.desc("last-update-time"), OrderItem.asc("id")) ;
-        LambdaQueryWrapper<SysPrivilege> queryWrapper = Wrappers.lambdaQuery();
-        queryWrapper.orderByDesc(SysPrivilege::getLastUpdateTime);
-        Page<SysPrivilege> sysPrivilegePage = sysPrivilegeService.page(page,queryWrapper);
+        page.addOrder(OrderItem.desc("last_update_time"), OrderItem.asc("id")) ;
+        Page<SysPrivilege> sysPrivilegePage = sysPrivilegeService.page(page);
         return R.ok(sysPrivilegePage) ;
     }
 

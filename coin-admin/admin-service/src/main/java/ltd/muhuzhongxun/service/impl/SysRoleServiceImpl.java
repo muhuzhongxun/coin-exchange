@@ -53,7 +53,6 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
                 SysRole::getName,
                 name
                 )
-                .orderByDesc(SysRole::getLastUpdateTime)
         );
     }
 }

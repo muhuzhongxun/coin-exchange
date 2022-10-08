@@ -34,14 +34,14 @@ public class SysPrivilegeServiceImpl extends ServiceImpl<SysPrivilegeMapper, Sys
         if(CollectionUtils.isEmpty(sysPrivileges)){
             return Collections.emptyList() ;
         }
-//        // 2 当前传递的角色使用包含该权限信息也要放进去
-//        for (SysPrivilege sysPrivilege : sysPrivileges) {
-//            Set<Long> currentRoleSysPrivilegeIds = sysPrivilegeMapper.getPrivilegesByRoleId(roleId)  ;
-//            if (currentRoleSysPrivilegeIds.contains(sysPrivilege.getId())){
-//                sysPrivilege.setOwn(1); // 当前的角色是否有该权限
-//            }
-//
-//        }
+        // 2 当前传递的角色使用包含该权限信息也要放进去
+        for (SysPrivilege sysPrivilege : sysPrivileges) {
+            Set<Long> currentRoleSysPrivilegeIds = sysPrivilegeMapper.getPrivilegesByRoleId(roleId)  ;
+            if (currentRoleSysPrivilegeIds.contains(sysPrivilege.getId())){
+                sysPrivilege.setOwn(1); // 当前的角色是否有该权限
+            }
+
+        }
         return sysPrivileges;
     }
 }

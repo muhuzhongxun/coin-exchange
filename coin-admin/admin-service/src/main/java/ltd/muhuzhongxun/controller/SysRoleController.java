@@ -37,7 +37,7 @@ public class SysRoleController {
             @ApiImplicitParam(name = "name", value = "角色名称", dataTypeClass = String.class),
     })
     public R<Page<SysRole>> findByPage(@ApiIgnore Page<SysRole> page, String name) {
-//      排序改在实现类实现  page.addOrder(OrderItem.desc("last_update_time"));
+        page.addOrder(OrderItem.desc("last_update_time"));
         return R.ok(sysRoleService.findByPage(page, name));
     }
 
