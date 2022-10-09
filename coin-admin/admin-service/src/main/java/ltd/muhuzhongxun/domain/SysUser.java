@@ -12,7 +12,7 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * 平台用户
  */
-@ApiModel(value="ltd-muhuzhongxun-domain-SysUser")
+@ApiModel(value="平台用户")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
