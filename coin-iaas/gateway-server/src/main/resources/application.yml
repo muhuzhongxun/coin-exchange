@@ -20,12 +20,18 @@ spring:
             - Path=/admin/**
           filters:
             - StripPrefix=1 # 当前端访问/admin/login -》 login将admin自动去掉
-        - id: test-router
-          uri: http://www.aliyun.com
+        - id: member-service_router
+          uri: lb://member-service   # 转发到那个目的地
           predicates:
-            - Path=/product
-              # http://www.baidu.com/test
-            # http://www.aliyun.com/product
+            - Path=/user/**
+          filters:
+            - StripPrefix=1 # 当前端访问/user/login - >login 将user自动的去掉
+#        - id: test-router
+#          uri: http://www.aliyun.com
+#          predicates:
+#            - Path=/product
+#              # http://www.baidu.com/test
+#            # http://www.aliyun.com/product
     sentinel:
       transport:
         dashboard: sentinel-server:8858  # sentinel-dashboard 放在ecs 里面
