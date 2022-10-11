@@ -81,7 +81,7 @@ public class WebLogAdminAspect {
         webLog.setUrl(url);
         webLog.setBasePath(StrUtil.removeSuffix(url, URLUtil.url(url).getPath())); // http://ip:port/
         webLog.setUsername(authentication==null ? "anonymous":authentication.getPrincipal().toString()); // 获取用户的id
-        webLog.setIp(request.getRemoteAddr()); // TODO 获取ip 地址
+        webLog.setIp(request.getRemoteAddr()); // 获取ip 地址
 
 
         // 获取方法

@@ -7,7 +7,8 @@ import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * 平台用户

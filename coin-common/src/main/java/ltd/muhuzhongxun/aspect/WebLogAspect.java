@@ -79,7 +79,7 @@ public class WebLogAspect {
                 //todo 此处ServletRequest不能被序列化,改用视频的result
 //                .result(request == null ? "" : JSON.toJSONString(request))
                 .result(result)
-                //todo 此处爆红所以注释掉。实体类中没有该属性
+                //此处爆红所以注释掉。实体类中没有该属性
 //                .recodeTime(System.currentTimeMillis())
                 .spendTime((int) stopWatch.getTotalTimeMillis())
                 .uri(request.getRequestURI())
@@ -99,12 +99,17 @@ public class WebLogAspect {
      */
     private Object getMethodParameter(Method method, Object[] args) {
         LocalVariableTableParameterNameDiscoverer localVariableTableParameterNameDiscoverer = new LocalVariableTableParameterNameDiscoverer();
+        // 方法的形参名称
         String[] parameterNames = localVariableTableParameterNameDiscoverer.getParameterNames(method);
         HashMap<String, Object> methodParameters = new HashMap<>();
         Parameter[] parameters = method.getParameters();
         if (args != null) {
             for (int i = 0; i < parameterNames.length; i++) {
-                methodParameters.put(parameterNames[i], args[i] == null ? "" : JSON.toJSONString(args[i]));
+                if(parameterNames[i].equals("password") || parameterNames[i].equals("file")){
+                    methodParameters.put(parameterNames[i],"受限的支持类型") ;
+                }else {
+                    methodParameters.put(parameterNames[i], args[i] == null ? "" : JSON.toJSONString(args[i]));
+                }
             }
         }
         return methodParameters;

@@ -1,5 +1,5 @@
 //package ltd.muhuzhongxun.config.jackson;
-//
+//该功能已移植到webMVCConfig
 //import com.fasterxml.jackson.annotation.JsonAutoDetect;
 //import com.fasterxml.jackson.annotation.PropertyAccessor;
 //import com.fasterxml.jackson.databind.ObjectMapper;

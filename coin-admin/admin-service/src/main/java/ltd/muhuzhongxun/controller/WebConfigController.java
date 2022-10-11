@@ -17,7 +17,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Arrays;
 
 @RestController
-@Api(tags = "webConfig的控制器")
+@Api(tags = "网站配置信息")
 @RequestMapping("/webConfigs")
 public class WebConfigController {
 

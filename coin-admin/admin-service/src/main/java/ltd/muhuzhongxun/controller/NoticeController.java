@@ -32,11 +32,11 @@ public class NoticeController{
     @ApiOperation(value = "分页查询公告")
     @PreAuthorize("hasAuthority('notice_query')")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "current", value = "当前页"),
-            @ApiImplicitParam(name = "size", value = "每页显示的条数"),
-            @ApiImplicitParam(name = "title", value = "公告的标题"),
-            @ApiImplicitParam(name = "startTime", value = "公告的创建开始时间"),
-            @ApiImplicitParam(name = "endTime", value = "公告的创建结束时间时间"),
+            @ApiImplicitParam(name = "current", value = "当前页", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "size", value = "每页显示的条数", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "title", value = "公告的标题", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "startTime", value = "公告的创建开始时间", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "endTime", value = "公告的创建结束时间时间", dataTypeClass = String.class),
     })
     public R<Page<Notice>> findByPage(@ApiIgnore Page<Notice> page, String title, String startTime, String endTime, Integer status) {
         page.addOrder(OrderItem.desc("last_update_time"));
@@ -48,7 +48,7 @@ public class NoticeController{
     @ApiOperation(value = "删除一个公告")
     @PreAuthorize("hasAuthority('notice_delete')")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "ids", value = "要删除的id的集合")
+            @ApiImplicitParam(name = "ids", value = "要删除的id的集合", dataTypeClass = String.class)
     })
     public R delete(@RequestBody String[] ids) {
         if (ids == null || ids.length == 0) {
@@ -66,8 +66,8 @@ public class NoticeController{
     @ApiOperation(value = "启用/禁用一个公告")
     @PreAuthorize("hasAuthority('notice_update')")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "要启用/禁用一个公告的公告Id"),
-            @ApiImplicitParam(name = "status", value = "要设置的公告状态")
+            @ApiImplicitParam(name = "id", value = "要启用/禁用一个公告的公告Id", dataTypeClass = String.class),
+            @ApiImplicitParam(name = "status", value = "要设置的公告状态", dataTypeClass = String.class)
 
     })
     public R updateStatus(Long id, Integer status) {
@@ -85,7 +85,7 @@ public class NoticeController{
     @PostMapping
     @ApiOperation(value = "新增一个公告")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "notice" ,value = "notice的json数据")
+            @ApiImplicitParam(name = "notice" ,value = "notice的json数据", dataTypeClass = String.class)
     })
     @PreAuthorize("hasAuthority('notice_create')")
     public R add(@RequestBody @Validated Notice notice){
@@ -103,7 +103,7 @@ public class NoticeController{
     @PatchMapping
     @ApiOperation(value = "修改一个公告")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "notice" ,value = "notice的json数据")
+            @ApiImplicitParam(name = "notice" ,value = "notice的json数据", dataTypeClass = String.class)
     })
     @PreAuthorize("hasAuthority('notice_update')")
     public R update(@RequestBody  @Validated  Notice notice){
@@ -125,8 +125,8 @@ public class NoticeController{
     @GetMapping("/simple")
     @ApiOperation(value = "查询前台展示的notice")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "current",value = "当前页") ,
-            @ApiImplicitParam(name = "size",value = "每页显示的条数")
+            @ApiImplicitParam(name = "current",value = "当前页", dataTypeClass = String.class) ,
+            @ApiImplicitParam(name = "size",value = "每页显示的条数", dataTypeClass = String.class)
     })
     public R<Page<Notice>> findNoticeForSimple(Page<Notice> page){
         Page<Notice> pageData =   noticeService.findNoticeForSimple(page) ;
@@ -137,7 +137,7 @@ public class NoticeController{
     @GetMapping("/simple/{id}")
     @ApiOperation(value = "查询某条Notice的详情")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id",value = "notice的id")
+            @ApiImplicitParam(name = "id",value = "notice的id", dataTypeClass = String.class)
     })
     public R<Notice> noticeSimpleInfo(@PathVariable("id")Long id){
         Notice notice = noticeService.getById(id);
