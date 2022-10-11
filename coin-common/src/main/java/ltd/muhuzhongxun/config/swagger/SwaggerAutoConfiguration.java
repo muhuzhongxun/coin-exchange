@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMappi
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-@EnableSwagger2
+@EnableOpenApi
 @EnableConfigurationProperties(SwaggerProperties.class)
 public class SwaggerAutoConfiguration {
 
@@ -36,7 +37,7 @@ public class SwaggerAutoConfiguration {
 
     @Bean
     public Docket docket() {
-        Docket docket = new Docket(DocumentationType.SWAGGER_2)
+        Docket docket = new Docket(DocumentationType.OAS_30)
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(swaggerProperties.getBasePackage()))

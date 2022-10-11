@@ -58,8 +58,9 @@
         <okhttp.version>5.0.0-alpha.10</okhttp.version>
         <okio.version>3.2.0</okio.version>
         <hutool.version>5.8.7</hutool.version>
-        <swagger2.version>3.0.0</swagger2.version>
+        <swagger3.version>3.0.0</swagger3.version>
         <bootstrap.version>3.1.3</bootstrap.version>
+        <aliyun-oss.version>2.2.0.RELEASE</aliyun-oss.version>
     </properties>
 
 <!--    全局依赖-->
@@ -72,6 +73,7 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
@@ -110,11 +112,6 @@
                 <version>${com-alibaba-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -229,19 +226,12 @@
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
             </dependency>
-            <!--swagger2-->
+            <!--        swagger3.0最新整合包-->
             <dependency>
                 <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger2</artifactId>
-                <version>${swagger2.version}</version>
+                <artifactId>springfox-boot-starter</artifactId>
+                <version>${swagger3.version}</version>
             </dependency>
-            <!--swagger2的web界面-->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swagger2.version}</version>
-            </dependency>
-
 
 <!--            nacos2021不支持读取bootstrap-->
             <!--        admin-service需要读取bootstrap文件-->
@@ -257,6 +247,21 @@
                 <artifactId>spring-cloud-loadbalancer</artifactId>
                 <version>${bootstrap.version}</version>
             </dependency>
+
+            <!--        注解@NotBlank-->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alicloud-oss -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
+                <version>${aliyun-oss.version}</version>
+            </dependency>
+
         </dependencies>
 
     </dependencyManagement>

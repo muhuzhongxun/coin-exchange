@@ -83,15 +83,10 @@
             <groupId>io.springside</groupId>
             <artifactId>springside-utils</artifactId>
         </dependency>
-        <!--        swagger2-->
+<!--        swagger3.0最新整合包-->
         <dependency>
             <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-        </dependency>
-        <!--        swagger2的web界面-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
+            <artifactId>springfox-boot-starter</artifactId>
         </dependency>
         <!--        web-->
         <dependency>
@@ -135,6 +130,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-loadbalancer</artifactId>
+        </dependency>
+
+<!--        注解@NotBlank-->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
         </dependency>
 
     </dependencies>
