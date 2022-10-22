@@ -17,6 +17,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @Api(tags = "极域验证的数据接口")
@@ -46,7 +47,7 @@ public class GeetestController {
         GeetestLibResult result = geetestLib.register(digestmod, paramMap);
         // 将结果状态写到session中，此处register接口存入session，后续validate接口会取出使用
         // 注意，此demo应用的session是单机模式，格外注意分布式环境下session的应用
-//        request.getSession().setAttribute(GeetestLib.GEETEST_SERVER_STATUS_SESSION_KEY, result.getStatus());
+//        request.getSession().setAttribute(GeetestLib.GEETEST_SERVER_STATUS_SESSION_KEY + ":" + uuid, result.getStatus(), result.getStatus());
         redisTemplate.opsForValue().set(GeetestLib.GEETEST_SERVER_STATUS_SESSION_KEY + ":" + uuid, result.getStatus());
 //        request.getSession().setAttribute("userId", userId);
         redisTemplate.opsForValue().set(GeetestLib.GEETEST_SERVER_USER_KEY+ ":" + uuid, uuid);

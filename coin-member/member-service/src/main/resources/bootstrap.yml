@@ -9,9 +9,5 @@ spring:
       server-addr: nacos-server:8848
       config:  # 配置文件的扩展名
         file-extension: yaml
-
-
-
 #拉取的配置文件id：member-service-dev.yaml
-
 

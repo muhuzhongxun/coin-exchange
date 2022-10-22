@@ -3,6 +3,10 @@ package ltd.muhuzhongxun.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ltd.muhuzhongxun.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ltd.muhuzhongxun.model.UserAuthForm;
+
+import java.util.List;
+
 public interface UserService extends IService<User>{
 
 
@@ -46,4 +50,26 @@ public interface UserService extends IService<User>{
      *
      */
     void updateUserAuthStatus(Long id, Byte authStatus, Long authCode,String remark);
+
+
+    /**
+     * 用户的实名认证
+     * @param id 用户的Id
+     * @param userAuthForm
+     * 认证的表单数据
+     * @return
+     *  认证的结果
+     */
+    boolean identifyVerify(Long id, UserAuthForm userAuthForm);
+
+    /**
+     * 用户的高级认证
+     * @param id
+     *  用户的Id
+     *
+     * @param imgs
+     *  用户的图片地址
+     */
+    void authUser(Long id, List<String> imgs);
+
 }

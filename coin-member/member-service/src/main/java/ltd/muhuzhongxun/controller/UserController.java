@@ -10,16 +10,19 @@ import ltd.muhuzhongxun.domain.User;
 import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
 import ltd.muhuzhongxun.domain.UserAuthInfo;
 import ltd.muhuzhongxun.model.R;
+import ltd.muhuzhongxun.model.UserAuthForm;
 import ltd.muhuzhongxun.service.UserAuthAuditRecordService;
 import ltd.muhuzhongxun.service.UserAuthInfoService;
 import ltd.muhuzhongxun.service.UserService;
 import ltd.muhuzhongxun.vo.UseAuthInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -38,6 +41,16 @@ public class UserController {
     @Autowired
     private UserAuthAuditRecordService userAuthAuditRecordService;
 
+    /**
+     * "查询会员的列表"
+     * @param page
+     * @param mobile
+     * @param userId
+     * @param userName
+     * @param realName
+     * @param status
+     * @return
+     */
     @GetMapping
     @ApiOperation(value = "查询会员的列表")
     @ApiImplicitParams({
@@ -64,6 +77,11 @@ public class UserController {
     }
 
 
+    /** 修改用户的状态
+     * @param id
+     * @param status
+     * @return
+     */
     @PostMapping("/status")
     @ApiOperation(value = "修改用户的状态")
     @ApiImplicitParams({
@@ -83,6 +101,10 @@ public class UserController {
     }
 
 
+    /** 修改用户
+     * @param user
+     * @return
+     */
     @PatchMapping
     @ApiOperation(value = "修改用户")
     @ApiImplicitParams({
@@ -98,6 +120,10 @@ public class UserController {
     }
 
 
+    /** 获取用户的详情
+     * @param id
+     * @return
+     */
     @GetMapping("/info")
     @ApiOperation(value = "获取用户的详情")
     @ApiImplicitParams({
@@ -108,6 +134,11 @@ public class UserController {
         return R.ok(userService.getById(id)) ;
     }
 
+    /** 查询该用户邀请的用户列表
+     * @param page
+     * @param userId
+     * @return
+     */
     @GetMapping("/directInvites")
     @ApiOperation(value = "查询该用户邀请的用户列表")
     @ApiImplicitParams({
@@ -121,6 +152,15 @@ public class UserController {
         return R.ok(userPage) ;
     }
 
+    /** 查询用户的审核列表
+     * @param page
+     * @param mobile
+     * @param userId
+     * @param userName
+     * @param realName
+     * @param reviewsStatus
+     * @return
+     */
     @GetMapping("/auths")
     @ApiOperation(value = "查询用户的审核列表")
     @ApiImplicitParams({
@@ -146,7 +186,7 @@ public class UserController {
     }
 
     /**
-     * 询用户的认证详情
+     * 查询用户的认证详情
      * {
      * user:
      * userAuthInfoList:[]
@@ -183,8 +223,7 @@ public class UserController {
 
 
     /**
-     * 审核的本质:
-     * 在于对一组图片(唯一Code)的认可,符合条件,审核通过
+     * 审核的本质: 在于对一组图片(唯一Code)的认可,符合条件,审核通过
      *
      * @return
      */
@@ -203,6 +242,51 @@ public class UserController {
 
         return R.ok();
     }
+
+    /** 用户端部分 **/
+
+
+    @GetMapping("/current/info")
+    @ApiOperation(value = "获取当前登录用户的详情")
+    public R<User> currentUserInfo(){
+        // 获取用户的Id
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = userService.getById(Long.valueOf(idStr));
+        user.setPassword("****");
+        user.setPaypassword("*****");
+        return R.ok(user) ;
+    }
+
+    /** 用户的实名认证
+     *
+     * @param userAuthForm
+     * @return
+     */
+    @PostMapping("/authAccount")
+    @ApiOperation(value = "用户的实名认证")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "" ,value = "",dataTypeClass = String.class)
+    })
+    public R identifyCheck(@RequestBody UserAuthForm userAuthForm){
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk = userService.identifyVerify(Long.valueOf(idStr),userAuthForm) ;
+        if(isOk){
+            return R.ok() ;
+        }
+        return R.fail("认证失败") ;
+    }
+
+    @PostMapping("/authUser")
+    @ApiOperation(value = "用户进行高级认证")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "imgs",value ="用户的图片地址" ,dataTypeClass = String.class)
+    })
+    public  R authUser(@RequestBody  String []imgs){
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        userService.authUser(Long.valueOf(idStr), Arrays.asList(imgs)) ;
+        return R.ok() ;
+    }
+
 
 
 }
