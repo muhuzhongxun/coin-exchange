@@ -31,4 +31,17 @@ public class ConfigServiceImpl extends ServiceImpl<ConfigMapper, Config> impleme
                 .like(!StringUtils.isEmpty(code),Config::getCode ,code)
         );
     }
+
+    /**
+     * 通过的规则的Code 查询签名
+     *
+     * @param code 签名的code
+     * @return config value
+     */
+    @Override
+    public Config getConfigByCode(String code) {
+        return getOne(new LambdaQueryWrapper<Config>().eq(Config::getCode,code));
+    }
+
+
 }

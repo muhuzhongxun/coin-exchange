@@ -20,4 +20,13 @@ public interface ConfigService extends IService<Config>{
      * @return
      */
     Page<Config> findByPage(Page<Config> page, String type, String name, String code);
+
+    /**
+     * 通过的规则的Code 查询签名
+     * @param code
+     *  签名的code
+     * @return
+     * config value
+     */
+    Config getConfigByCode(String code);
 }
