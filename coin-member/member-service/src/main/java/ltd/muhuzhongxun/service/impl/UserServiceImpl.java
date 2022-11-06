@@ -5,14 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import ltd.muhuzhongxun.config.IdAutoConfiguration;
+import ltd.muhuzhongxun.domain.Sms;
 import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
 import ltd.muhuzhongxun.domain.UserAuthInfo;
 import ltd.muhuzhongxun.geetest.GeetestLib;
+import ltd.muhuzhongxun.model.UpdatePhoneParam;
 import ltd.muhuzhongxun.model.UserAuthForm;
+import ltd.muhuzhongxun.service.SmsService;
 import ltd.muhuzhongxun.service.UserAuthAuditRecordService;
 import ltd.muhuzhongxun.service.UserAuthInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -47,6 +52,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Autowired
     private Snowflake snowflake;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private SmsService smsService;
+
     /**
      * 条件分页查询会员的列表
      *
@@ -236,6 +248,64 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         updateById(user); // 更新用户的状态
 
     }
+
+    /**
+     * 修改用户的手机号号
+     *
+     * @param updatePhoneParam
+     * @return
+     */
+    @Override
+    public boolean updatePhone(Long userId , UpdatePhoneParam updatePhoneParam) {
+        // 1 使用 userId 查询用户
+        User user = getById(userId);
+
+        // 2 验证旧手机
+        String oldMobile = user.getMobile(); // 旧的手机号 --- > 验证旧手机的验证码
+        String oldMobileCode = stringRedisTemplate.opsForValue().get("SMS:VERIFY_OLD_PHONE:" + oldMobile);
+        if(!updatePhoneParam.getOldValidateCode().equals(oldMobileCode)){
+            throw new IllegalArgumentException("旧手机的验证码错误") ;
+        }
+
+        // 3 验证新手机
+        String newPhoneCode = stringRedisTemplate.opsForValue().get("SMS:VERIFY_OLD_PHONE:" + updatePhoneParam.getNewMobilePhone());
+//        复用VERIFY_OLD_PHONE模板内容
+//        String newPhoneCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_PHONE_VERIFY:" + updatePhoneParam.getNewMobilePhone());
+        if(!updatePhoneParam.getValidateCode().equals(newPhoneCode)){
+            throw new IllegalArgumentException("新手机的验证码错误") ;
+        }
+
+        // 4 修改手机号
+        user.setMobile(updatePhoneParam.getNewMobilePhone());
+
+        return updateById(user);
+    }
+
+
+    /**
+     * 检验新的手机号是否可用,若可用,则给新的手机号发送一个验证码
+     *
+     * @param mobile      新的手机号
+     * @param countryCode 国家代码
+     * @return
+     */
+    @Override
+    public boolean checkNewPhone(String mobile, String countryCode) {
+        //1 新的手机号,没有旧的用户使用
+        int count = count(new LambdaQueryWrapper<User>().eq(User::getMobile, mobile).eq(User::getCountryCode,countryCode));
+        if(count>0){ // 有用户占用这个手机号
+            throw new IllegalArgumentException("该手机号已经被占用") ;
+        }
+        // 2 向新的手机发送短信
+        Sms sms = new Sms();
+        sms.setMobile(mobile);
+        sms.setCountryCode(countryCode);
+        //Todo 这里懒得申请太多阿里云模板，直接复用VERIFY_OLD_PHONE的
+        //sms.setTemplateCode("CHANGE_PHONE_VERIFY"); // 模板代码  -- > 校验手机号
+        sms.setTemplateCode("VERIFY_OLD_PHONE");
+        return smsService.sendSms(sms) ;
+    }
+
 
 }
 

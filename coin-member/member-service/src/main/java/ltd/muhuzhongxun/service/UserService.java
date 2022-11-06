@@ -3,6 +3,7 @@ package ltd.muhuzhongxun.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import ltd.muhuzhongxun.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ltd.muhuzhongxun.model.UpdatePhoneParam;
 import ltd.muhuzhongxun.model.UserAuthForm;
 
 import java.util.List;
@@ -71,5 +72,23 @@ public interface UserService extends IService<User>{
      *  用户的图片地址
      */
     void authUser(Long id, List<String> imgs);
+
+    /**
+     * 修改用户的手机号号
+     * @param userId
+     * @param updatePhoneParam
+     * @return
+     */
+    boolean updatePhone(Long userId , UpdatePhoneParam updatePhoneParam);
+
+    /**
+     * 检验新的手机号是否可用,若可用,则给新的手机号发送一个验证码
+     * @param mobile
+     * 新的手机号
+     * @param countryCode
+     * 国家代码
+     * @return
+     */
+    boolean checkNewPhone(String mobile, String countryCode);
 
 }

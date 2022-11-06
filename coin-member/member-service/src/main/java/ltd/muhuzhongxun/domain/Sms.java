@@ -1,15 +1,14 @@
 package ltd.muhuzhongxun.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
 
 /**
     * 短信信息
@@ -23,7 +22,7 @@ public class Sms {
     /**
      * 主键id
      */
-    @TableId(value = "id", type = IdType.INPUT)
+    @TableId(value = "id", type = IdType.AUTO)
     @ApiModelProperty(value="主键id")
     private Long id;
 
@@ -32,6 +31,7 @@ public class Sms {
      */
     @TableField(value = "template_code")
     @ApiModelProperty(value="短信模板ID")
+    @NotBlank
     private String templateCode;
 
     /**
@@ -39,6 +39,7 @@ public class Sms {
      */
     @TableField(value = "country_code")
     @ApiModelProperty(value="国际区号")
+    @NotBlank
     private String countryCode;
 
     /**
@@ -46,6 +47,7 @@ public class Sms {
      */
     @TableField(value = "mobile")
     @ApiModelProperty(value="短信接收手机号")
+    @NotBlank
     private String mobile;
 
     /**
@@ -58,7 +60,7 @@ public class Sms {
     /**
      * 短信状态：0，默认值；大于0，成功发送短信数量；小于0，异常；
      */
-    @TableField(value = "`status`")
+    @TableField(value = "status")
     @ApiModelProperty(value="短信状态：0，默认值；大于0，成功发送短信数量；小于0，异常；")
     private Integer status;
 
@@ -72,14 +74,14 @@ public class Sms {
     /**
      * 发送时间
      */
-    @TableField(value = "last_update_time")
+    @TableField(value = "last_update_time",fill = FieldFill.INSERT_UPDATE)
     @ApiModelProperty(value="发送时间")
     private Date lastUpdateTime;
 
     /**
      * 创建时间
      */
-    @TableField(value = "created")
+    @TableField(value = "created",fill = FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
 }

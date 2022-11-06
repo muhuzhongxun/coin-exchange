@@ -10,6 +10,7 @@ import ltd.muhuzhongxun.domain.User;
 import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
 import ltd.muhuzhongxun.domain.UserAuthInfo;
 import ltd.muhuzhongxun.model.R;
+import ltd.muhuzhongxun.model.UpdatePhoneParam;
 import ltd.muhuzhongxun.model.UserAuthForm;
 import ltd.muhuzhongxun.service.UserAuthAuditRecordService;
 import ltd.muhuzhongxun.service.UserAuthInfoService;
@@ -257,6 +258,7 @@ public class UserController {
         return R.ok(user) ;
     }
 
+    //Todo 这个控制类有bug，java.lang.NullPointerException: Cannot invoke "String.equals(Object)" because the return value of "springfox.documentation.service.Parameter.getName()" is null
     /** 用户的实名认证
      *
      * @param userAuthForm
@@ -281,10 +283,38 @@ public class UserController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "imgs",value ="用户的图片地址" ,dataTypeClass = String.class)
     })
-    public  R authUser(@RequestBody  String []imgs){
+    public  R authUser(@RequestBody String[] imgs){
         String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         userService.authUser(Long.valueOf(idStr), Arrays.asList(imgs)) ;
         return R.ok() ;
+    }
+
+//http://localhost:8081/#/usercenter/modify-phone
+
+    @PostMapping("/updatePhone")
+    @ApiOperation(value = "修改手机号")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updatePhoneParam",value = "updatePhoneParam 的json数据",dataTypeClass = String.class)
+    })
+    public R updatePhone(@RequestBody UpdatePhoneParam updatePhoneParam){
+        String idStr = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        boolean isOk =  userService.updatePhone(Long.valueOf(idStr),updatePhoneParam) ;
+        if(isOk){
+            return R.ok() ;
+        }
+        return R.fail("修改失败") ;
+    }
+
+
+    @GetMapping("/checkTel")
+    @ApiOperation(value = "检查新的手机号是否可用,如可用,则给该新手机发送验证码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "mobile" ,value = "新的手机号",dataTypeClass = String.class),
+            @ApiImplicitParam(name = "countryCode" ,value = "手机号的区域",dataTypeClass = String.class)
+    })
+    public R checkNewPhone(@RequestParam(required = true) String mobile,@RequestParam(required = true) String countryCode){
+        boolean isOk =   userService.checkNewPhone(mobile,countryCode) ;
+        return isOk ? R.ok():R.fail("新的手机号校验失败") ;
     }
 
 
