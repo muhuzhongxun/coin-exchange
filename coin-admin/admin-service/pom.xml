@@ -17,15 +17,21 @@
             <artifactId>admin-api</artifactId>
             <version>1.0</version>
         </dependency>
-        <dependency>
-            <groupId>ltd.muhuzhongxun</groupId>
-            <artifactId>coin-common</artifactId>
-            <version>1.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ltd.muhuzhongxun</groupId>-->
+<!--            <artifactId>coin-common</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
 <!--        oss对象储存-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ltd.muhuzhongxun</groupId>
+            <artifactId>member-api</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

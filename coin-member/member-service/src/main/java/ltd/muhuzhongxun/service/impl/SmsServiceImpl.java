@@ -8,18 +8,16 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import lombok.extern.slf4j.Slf4j;
 import ltd.muhuzhongxun.domain.Config;
+import ltd.muhuzhongxun.domain.Sms;
+import ltd.muhuzhongxun.mapper.SmsMapper;
 import ltd.muhuzhongxun.service.ConfigService;
+import ltd.muhuzhongxun.service.SmsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import ltd.muhuzhongxun.domain.Sms;
-import ltd.muhuzhongxun.mapper.SmsMapper;
-import ltd.muhuzhongxun.service.SmsService;
+
 @Service
 @Slf4j
 public class SmsServiceImpl extends ServiceImpl<SmsMapper, Sms> implements SmsService {

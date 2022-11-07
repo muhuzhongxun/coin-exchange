@@ -45,6 +45,7 @@ public class UserBank {
      */
     @TableField(value = "real_name")
     @ApiModelProperty(value="开户人")
+    @NotBlank
     private String realName;
 
     /**
@@ -103,4 +104,9 @@ public class UserBank {
     @TableField(value = "created",fill = FieldFill.INSERT)
     @ApiModelProperty(value="创建时间")
     private Date created;
+
+    @ApiModelProperty(value="交易密码")
+    @TableField(exist = false)
+    @NotBlank
+    private String payPassword;
 }

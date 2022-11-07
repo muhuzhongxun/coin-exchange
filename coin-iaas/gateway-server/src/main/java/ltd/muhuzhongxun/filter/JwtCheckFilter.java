@@ -23,7 +23,7 @@ import java.util.Set;
 public class JwtCheckFilter implements GlobalFilter, Ordered {
 
     //白名单，不需要auth
-    @Value("${no.token.access.urls:/admin/login,/admin/validate/code,/user/gt/register,/user/login}")
+    @Value("${no.token.access.urls:/admin/login,/admin/validate/code,/user/gt/register,/user/login,/user/users/register,/user/sms/sendTo,/user/users/setPassword}")
     private Set<String> noTokenAccessUrls;
 //    private Redis
 

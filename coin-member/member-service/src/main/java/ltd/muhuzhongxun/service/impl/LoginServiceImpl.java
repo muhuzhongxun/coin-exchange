@@ -5,11 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import ltd.muhuzhongxun.feign.JwtToken;
 import ltd.muhuzhongxun.feign.OAuth2FeignClient;
 import ltd.muhuzhongxun.geetest.GeetestLib;
-import ltd.muhuzhongxun.geetest.GeetestLibResult;
 import ltd.muhuzhongxun.model.LoginForm;
 import ltd.muhuzhongxun.model.LoginUser;
 import ltd.muhuzhongxun.service.LoginService;
-import ltd.muhuzhongxun.util.IpUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,11 +15,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service

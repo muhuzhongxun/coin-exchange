@@ -6,14 +6,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import ltd.muhuzhongxun.domain.User;
 import ltd.muhuzhongxun.domain.UserWallet;
 import ltd.muhuzhongxun.model.R;
-import ltd.muhuzhongxun.service.UserService;
 import ltd.muhuzhongxun.service.UserWalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 

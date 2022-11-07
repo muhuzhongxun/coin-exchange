@@ -7,13 +7,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import ltd.muhuzhongxun.domain.UserAddress;
-import ltd.muhuzhongxun.domain.UserBank;
 import ltd.muhuzhongxun.model.R;
 import ltd.muhuzhongxun.service.UserAddressService;
-import ltd.muhuzhongxun.service.UserBankService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 

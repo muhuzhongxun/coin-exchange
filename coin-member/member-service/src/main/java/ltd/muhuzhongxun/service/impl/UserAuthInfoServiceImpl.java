@@ -1,16 +1,17 @@
 package ltd.muhuzhongxun.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ltd.muhuzhongxun.domain.UserAuthInfo;
 import ltd.muhuzhongxun.mapper.UserAuthInfoMapper;
 import ltd.muhuzhongxun.service.UserAuthInfoService;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
 @Service
-public class UserAuthInfoServiceImpl extends ServiceImpl<UserAuthInfoMapper, UserAuthInfo> implements UserAuthInfoService{
+public class UserAuthInfoServiceImpl extends ServiceImpl<UserAuthInfoMapper, UserAuthInfo> implements UserAuthInfoService {
 
     /**
      * 通过认证的Code 来查询用户的认证详情

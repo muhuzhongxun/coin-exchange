@@ -1,7 +1,8 @@
 package ltd.muhuzhongxun.service;
 
-import ltd.muhuzhongxun.domain.Sms;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ltd.muhuzhongxun.domain.Sms;
+
 public interface SmsService extends IService<Sms>{
 
 

@@ -30,6 +30,9 @@ public class ResourceSrverConfig extends ResourceServerConfigurerAdapter {
                 // 基于token，所以不需要session
                 .sessionManagement().disable()
                 .authorizeRequests().antMatchers(
+                        "/users/register",
+                        "/users/setPassword",
+                        "/sms/sendTo",
                         "/gt/register",
                         "/login",
                         "/v3/api-docs",

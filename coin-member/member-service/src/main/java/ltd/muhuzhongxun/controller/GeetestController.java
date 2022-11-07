@@ -17,7 +17,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @Api(tags = "极域验证的数据接口")

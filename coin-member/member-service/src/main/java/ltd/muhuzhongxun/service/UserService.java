@@ -1,12 +1,13 @@
 package ltd.muhuzhongxun.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import ltd.muhuzhongxun.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import ltd.muhuzhongxun.model.UpdatePhoneParam;
-import ltd.muhuzhongxun.model.UserAuthForm;
+import ltd.muhuzhongxun.domain.User;
+import ltd.muhuzhongxun.dto.UserDto;
+import ltd.muhuzhongxun.model.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserService extends IService<User>{
 
@@ -29,7 +30,7 @@ public interface UserService extends IService<User>{
      * 会员的审核状态
      * @return
      */
-    Page<User> findByPage(Page<User> page, String mobile, Long userId, String userName, String realName, Integer status ,Integer reviewStatus);
+    Page<User> findByPage(Page<User> page, String mobile, Long userId, String userName, String realName, Integer status , Integer reviewStatus);
 
     /**
      * 通过用户的Id 查询该用户邀请的人员
@@ -91,4 +92,64 @@ public interface UserService extends IService<User>{
      */
     boolean checkNewPhone(String mobile, String countryCode);
 
+    /**
+     * 修改用户的登录密码
+     *
+     * @param userId           用户的ID
+     * @param updateLoginParam 修改密码的表单参数
+     * @return
+     */
+    boolean updateUserLoginPwd(Long userId, UpdateLoginParam updateLoginParam);
+
+
+    /**
+     * 修改用户的交易密码
+     *
+     * @param userId           用户的Id
+     * @param updateLoginParam 修改交易密码的表单参数
+     * @return
+     */
+    boolean updateUserPayPwd(Long userId, UpdateLoginParam updateLoginParam);
+
+    /**
+     * 重置用户的支付密码
+     *
+     * @param userId                用户的Id
+     * @param unsetPayPasswordParam 重置的表单参数
+     * @return 是否重置成功
+     */
+    boolean unsetPayPassword(Long userId, UnsetPayPasswordParam unsetPayPasswordParam);
+
+    /**
+     * 获取该用户邀请的用户列表
+     *
+     * @param userId 用户的Id
+     * @return
+     */
+    List<User> getUserInvites(Long userId);
+
+    /**
+     * 通过用户的Id 批量查询用户的基础信息
+     *
+     * @param ids
+     * @return
+     */
+//    List<UserDto> getBasicUsers(List<Long> ids);
+    Map<Long, UserDto> getBasicUsers(List<Long> ids, String userName, String mobile);
+
+    /**
+     * 用户的注册
+     *
+     * @param registerParam 注册的表单参数
+     * @return
+     */
+    boolean register(RegisterParam registerParam);
+
+    /**
+     * 重置登陆密码
+     *
+     * @param unSetPasswordParam
+     * @return
+     */
+    boolean unsetLoginPwd(UnSetPasswordParam unSetPasswordParam);
 }

@@ -1,8 +1,9 @@
 package ltd.muhuzhongxun.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import ltd.muhuzhongxun.domain.UserAddress;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ltd.muhuzhongxun.domain.UserAddress;
+
 public interface UserAddressService extends IService<UserAddress>{
 
     /**

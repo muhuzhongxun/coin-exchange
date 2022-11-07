@@ -1,34 +1,37 @@
 package ltd.muhuzhongxun.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.RandomUtil;
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import ltd.muhuzhongxun.config.IdAutoConfiguration;
 import ltd.muhuzhongxun.domain.Sms;
+import ltd.muhuzhongxun.domain.User;
 import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
 import ltd.muhuzhongxun.domain.UserAuthInfo;
+import ltd.muhuzhongxun.dto.UserDto;
 import ltd.muhuzhongxun.geetest.GeetestLib;
-import ltd.muhuzhongxun.model.UpdatePhoneParam;
-import ltd.muhuzhongxun.model.UserAuthForm;
+import ltd.muhuzhongxun.mapper.UserMapper;
+import ltd.muhuzhongxun.mappers.UserDtoMapper;
+import ltd.muhuzhongxun.model.*;
 import ltd.muhuzhongxun.service.SmsService;
 import ltd.muhuzhongxun.service.UserAuthAuditRecordService;
 import ltd.muhuzhongxun.service.UserAuthInfoService;
+import ltd.muhuzhongxun.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.ReactiveRedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import ltd.muhuzhongxun.mapper.UserMapper;
-import ltd.muhuzhongxun.domain.User;
-import ltd.muhuzhongxun.service.UserService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
@@ -164,7 +167,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     private void checkForm(UserAuthForm userAuthForm) {
-        userAuthForm.check(userAuthForm, geetestLib, redisTemplate);
+        userAuthForm.check(geetestLib, redisTemplate);
     }
 
 
@@ -300,12 +303,233 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Sms sms = new Sms();
         sms.setMobile(mobile);
         sms.setCountryCode(countryCode);
-        //Todo 这里懒得申请太多阿里云模板，直接复用VERIFY_OLD_PHONE的
-        //sms.setTemplateCode("CHANGE_PHONE_VERIFY"); // 模板代码  -- > 校验手机号
-        sms.setTemplateCode("VERIFY_OLD_PHONE");
+        sms.setTemplateCode("CHANGE_PHONE_VERIFY"); // 模板代码  -- > 校验手机号
         return smsService.sendSms(sms) ;
     }
 
+
+    /**
+     * 修改用户的登录密码
+     *
+     * @param userId           用户的ID
+     * @param updateLoginParam 修改密码的表单参数
+     * @return
+     */
+    @Override
+    public boolean updateUserLoginPwd(Long userId, UpdateLoginParam updateLoginParam) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的Id错误");
+        }
+        String oldpassword = updateLoginParam.getOldpassword();
+        // 1 校验之前的密码 数据库的密码都是我们加密后的密码.-->
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        boolean matches = bCryptPasswordEncoder.matches(updateLoginParam.getOldpassword(), user.getPassword());
+        if (!matches) {
+            throw new IllegalArgumentException("用户的原始密码输入错误");
+        }
+        // 2 校验手机的验证码
+        String validateCode = updateLoginParam.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_LOGIN_PWD_VERIFY:" + user.getMobile());//"SMS:CHANGE_LOGIN_PWD_VERIFY:111111"
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        user.setPassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword())); // 修改为加密后的密码
+        return updateById(user);
+    }
+
+    /**
+     * 修改用户的交易密码
+     *
+     * @param userId           用户的Id
+     * @param updateLoginParam 修改交易密码的表单参数
+     * @return
+     */
+    @Override
+    public boolean updateUserPayPwd(Long userId, UpdateLoginParam updateLoginParam) {
+        // 1 查询之前的用户
+        User user = getById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的Id错误");
+        }
+        String oldpassword = updateLoginParam.getOldpassword();
+        // 1 校验之前的密码 数据库的密码都是我们加密后的密码.-->
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        boolean matches = bCryptPasswordEncoder.matches(updateLoginParam.getOldpassword(), user.getPaypassword());
+        if (!matches) {
+            throw new IllegalArgumentException("用户的原始密码输入错误");
+        }
+        // 2 校验手机的验证码
+        String validateCode = updateLoginParam.getValidateCode();
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:CHANGE_PAY_PWD_VERIFY:" + user.getMobile());//"SMS:CHANGE_LOGIN_PWD_VERIFY:111111"
+        if (!validateCode.equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        user.setPaypassword(bCryptPasswordEncoder.encode(updateLoginParam.getNewpassword())); // 修改为加密后的密码
+        return updateById(user);
+    }
+
+
+
+    /**
+     * 重置用户的支付密码
+     *
+     * @param userId                用户的Id
+     * @param unsetPayPasswordParam 重置的表单参数
+     * @return 是否重置成功
+     */
+    @Override
+    public boolean unsetPayPassword(Long userId, UnsetPayPasswordParam unsetPayPasswordParam) {
+        User user = getById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("用户的Id 错误");
+        }
+        String validateCode = unsetPayPasswordParam.getValidateCode();
+        String phoneValidate = stringRedisTemplate.opsForValue().get("SMS:FORGOT_PAY_PWD_VERIFY:" + user.getMobile());
+        if (!validateCode.equals(phoneValidate)) {
+            throw new IllegalArgumentException("用户的验证码错误");
+        }
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        user.setPaypassword(bCryptPasswordEncoder.encode(unsetPayPasswordParam.getPayPassword()));
+
+        return updateById(user);
+    }
+
+    /**
+     * 获取该用户邀请的用户列表
+     *
+     * @param userId 用户的Id
+     * @return
+     */
+    @Override
+    public List<User> getUserInvites(Long userId) {
+        List<User> list = list(new LambdaQueryWrapper<User>().eq(User::getDirectInviteid, userId));
+        if (CollectionUtils.isEmpty(list)) {
+            return Collections.emptyList();
+        }
+        list.forEach(user -> {
+            user.setPaypassword("*********");
+            user.setPassword("********");
+            user.setAccessKeyId("*********");
+            user.setAccessKeySecret("*********");
+        });
+        return list;
+    }
+
+    /**
+     * 通过用户的信息查询用户
+     *
+     * @param ids      用户的批量查询,用在我们给别人远程调用时批量获取用户的数据
+     * @param userName 使用用户名查询一系列用户的记录
+     * @param mobile   使用用户手机查询一系列用户的记录
+     * @return
+     */
+    @Override
+    public Map<Long, UserDto> getBasicUsers(List<Long> ids, String userName, String mobile) {
+        if (CollectionUtils.isEmpty(ids) && StringUtils.isEmpty(userName) && StringUtils.isEmpty(mobile)) {
+            return Collections.emptyMap();
+        }
+        List<User> list = list(new LambdaQueryWrapper<User>()
+                .in(!CollectionUtils.isEmpty(ids), User::getId, ids)
+                .like(!StringUtils.isEmpty(userName), User::getUsername, userName)
+                .like(!StringUtils.isEmpty(mobile), User::getMobile, mobile));
+        if (CollectionUtils.isEmpty(list)) {
+            return Collections.emptyMap();
+        }
+        // 将user->userDto
+        List<UserDto> userDtos = UserDtoMapper.INSTANCE.convert2Dto(list);
+        Map<Long, UserDto> userDtoIdMappings = userDtos.stream().collect(Collectors.toMap(UserDto::getId, userDto -> userDto));
+        return userDtoIdMappings;
+    }
+
+    /**
+     * 用户的注册
+     *
+     * @param registerParam 注册的表单参数
+     * @return
+     */
+    @Override
+    public boolean register(RegisterParam registerParam) {
+        log.info("用户开始注册{}", JSON.toJSONString(registerParam, true));
+        String mobile = registerParam.getMobile();
+        String email = registerParam.getEmail();
+        // 1 简单的校验
+        if (StringUtils.isEmpty(email) && StringUtils.isEmpty(mobile)) {
+            throw new IllegalArgumentException("手机号或邮箱不能同时为空");
+        }
+        // 2 查询校验
+        int count = count(new LambdaQueryWrapper<User>()
+                .eq(!StringUtils.isEmpty(email), User::getEmail, email)
+                .eq(!StringUtils.isEmpty(mobile), User::getMobile, mobile)
+        );
+        if (count > 0) {
+            throw new IllegalArgumentException("手机号或邮箱已经被注册");
+        }
+
+        registerParam.check(geetestLib, redisTemplate); // 进行极验的校验
+        User user = getUser(registerParam); // 构建一个新的用户
+        return save(user);
+    }
+
+    private User getUser(RegisterParam registerParam) {
+        User user = new User();
+        user.setCountryCode(registerParam.getCountryCode());
+        user.setEmail(registerParam.getEmail());
+        user.setMobile(registerParam.getMobile());
+        String encodePwd = new BCryptPasswordEncoder().encode(registerParam.getPassword());
+        user.setPassword(encodePwd);
+        user.setPaypassSetting(false);
+        user.setStatus((byte) 1);
+        user.setType((byte) 1);
+        user.setAuthStatus((byte) 0);
+        user.setLogins(0);
+        user.setInviteCode(RandomUtil.randomString(6)); // 用户的邀请码
+        if (!StringUtils.isEmpty(registerParam.getInvitionCode())) {
+            User userPre = getOne(new LambdaQueryWrapper<User>().eq(User::getInviteCode, registerParam.getInvitionCode()));
+            if (userPre != null) {
+                user.setDirectInviteid(String.valueOf(userPre.getId())); // 邀请人的id , 需要查询
+                user.setInviteRelation(String.valueOf(userPre.getId())); // 邀请人的id , 需要查询
+            }
+
+        }
+        return user;
+    }
+
+    /**
+     * 重置登陆密码
+     *
+     * @param unSetPasswordParam
+     * @return
+     */
+    @Override
+    public boolean unsetLoginPwd(UnSetPasswordParam unSetPasswordParam) {
+        log.info("开始重置密码{}", JSON.toJSONString(unSetPasswordParam, true));
+        // 1 极验校验
+        unSetPasswordParam.check(geetestLib, redisTemplate);
+        // 2 手机号码校验
+        String phoneValidateCode = stringRedisTemplate.opsForValue().get("SMS:FORGOT_VERIFY:" + unSetPasswordParam.getMobile());
+        if (!unSetPasswordParam.getValidateCode().equals(phoneValidateCode)) {
+            throw new IllegalArgumentException("手机验证码错误");
+        }
+        // 3 数据库用户的校验
+
+        String mobile = unSetPasswordParam.getMobile();
+        User user = getOne(new LambdaQueryWrapper<User>().eq(User::getMobile, mobile));
+        if (user == null) {
+            throw new IllegalArgumentException("该用户不存在");
+        }
+        String encode = new BCryptPasswordEncoder().encode(unSetPasswordParam.getPassword());
+        user.setPassword(encode);
+        return updateById(user);
+    }
+
+    public static void main(String[] args) {
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        String encode = bCryptPasswordEncoder.encode("c4ca4238a0b923820dcc509a6f75849b");// 我们在网页上的MD5(LTD12345)
+        // $2a$10$ST0HQ4hZCRCMLGA8dDA96e7wzDMnBRR1rSTrD2z/LLVgivdArzF42-> 修改我们的数据库密码->替换为现在这个值
+        System.out.println(encode);
+    }
 
 }
 

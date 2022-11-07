@@ -1,7 +1,7 @@
 package ltd.muhuzhongxun.service;
 
-import ltd.muhuzhongxun.domain.UserAuthInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import ltd.muhuzhongxun.domain.UserAuthInfo;
 
 import java.util.List;
 

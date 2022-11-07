@@ -1,13 +1,13 @@
 package ltd.muhuzhongxun.vo;
 
-import ltd.muhuzhongxun.domain.User;
-import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
-import ltd.muhuzhongxun.domain.UserAuthInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ltd.muhuzhongxun.domain.User;
+import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
+import ltd.muhuzhongxun.domain.UserAuthInfo;
 
 import java.io.Serializable;
 import java.util.List;

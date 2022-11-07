@@ -9,9 +9,9 @@ import io.swagger.annotations.ApiOperation;
 import ltd.muhuzhongxun.domain.User;
 import ltd.muhuzhongxun.domain.UserAuthAuditRecord;
 import ltd.muhuzhongxun.domain.UserAuthInfo;
-import ltd.muhuzhongxun.model.R;
-import ltd.muhuzhongxun.model.UpdatePhoneParam;
-import ltd.muhuzhongxun.model.UserAuthForm;
+import ltd.muhuzhongxun.dto.UserDto;
+import ltd.muhuzhongxun.feign.UserServiceFeign;
+import ltd.muhuzhongxun.model.*;
 import ltd.muhuzhongxun.service.UserAuthAuditRecordService;
 import ltd.muhuzhongxun.service.UserAuthInfoService;
 import ltd.muhuzhongxun.service.UserService;
@@ -26,11 +26,12 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
 @Api(tags = "会员的控制器")
-public class UserController {
+public class UserController implements UserServiceFeign {
 
 
     @Autowired
@@ -317,6 +318,90 @@ public class UserController {
         return isOk ? R.ok():R.fail("新的手机号校验失败") ;
     }
 
+    @PostMapping("/updateLoginPassword")
+    @ApiOperation(value = "修改用户的登录密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updateLoginParam", value = "修改用户的登录密码",dataTypeClass = String.class)
+    })
+    public R updateLoginPwd(@RequestBody @Validated UpdateLoginParam updateLoginParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk = userService.updateUserLoginPwd(userId, updateLoginParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
 
+    @PostMapping("/updatePayPassword")
+    @ApiOperation(value = "修改用户的交易密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "updateLoginParam", value = "修改用户的交易密码",dataTypeClass = String.class)
+    })
+    public R updatePayPwd(@RequestBody @Validated UpdateLoginParam updateLoginParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk = userService.updateUserPayPwd(userId, updateLoginParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("修改失败");
+    }
+
+
+    @PostMapping("/setPayPassword")
+    @ApiOperation(value = "重新设置交易密码")
+    public R setPayPassword(@RequestBody @Validated UnsetPayPasswordParam unsetPayPasswordParam) {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        boolean isOk = userService.unsetPayPassword(userId, unsetPayPasswordParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("重置失败");
+    }
+
+
+    @GetMapping("/invites")
+    @ApiOperation(value = "用户的邀请列表")
+    public R<List<User>> getUserInvites() {
+        Long userId = Long.valueOf(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        List<User> users = userService.getUserInvites(userId);
+        return R.ok(users);
+    }
+
+
+    @PostMapping("/register")
+    @ApiOperation(value = "用户的注册")
+    public R register(@RequestBody RegisterParam registerParam) {
+        boolean isOk = userService.register(registerParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("注册失败");
+    }
+
+
+    @PostMapping("/setPassword")
+    @ApiOperation(value = "用户重置密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "unSetPasswordParam", value = "unSetPasswordParam json",dataTypeClass = String.class)
+    })
+    public R unsetPassword(@RequestBody @Validated UnSetPasswordParam unSetPasswordParam) {
+        boolean isOk = userService.unsetLoginPwd(unSetPasswordParam);
+        if (isOk) {
+            return R.ok();
+        }
+        return R.fail("重置失败");
+    }
+
+    /**
+     * 用于admin-service 里面远程调用member-service
+     *
+     * @param ids
+     * @return
+     */
+    @Override
+    public Map<Long, UserDto> getBasicUsers(List<Long> ids, String userName, String mobile) {
+        Map<Long, UserDto> userDtos = userService.getBasicUsers(ids,  userName,  mobile);
+        return userDtos;
+    }
 
 }

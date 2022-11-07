@@ -45,7 +45,7 @@
         <redisson-spring-boot-starter.version>3.17.0</redisson-spring-boot-starter.version>
         <jetcache-starter-redis.version>2.6.7</jetcache-starter-redis.version>
         <disruptor.version>4.0.0.RC1</disruptor.version>
-        <org.mapstruct.version>1.5.2.Final</org.mapstruct.version>
+        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
         <commons-beanutils.version>1.9.4</commons-beanutils.version>
         <swagger-annotations.version>2.2.1</swagger-annotations.version>
         <googleauth.version>1.5.0</googleauth.version>
@@ -164,15 +164,15 @@
             <!--mapStruct依赖-->
             <dependency>
                 <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct-jdk8</artifactId>
+                <artifactId>mapstruct</artifactId>
                 <version>${org.mapstruct.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct-processor</artifactId>
-                <version>${org.mapstruct.version}</version>
-                <scope>provided</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.mapstruct</groupId>-->
+<!--                <artifactId>mapstruct-processor</artifactId>-->
+<!--                <version>${org.mapstruct.version}</version>-->
+<!--                <scope>provided</scope>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>net.sf.supercsv</groupId>
